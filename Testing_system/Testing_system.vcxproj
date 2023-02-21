@@ -129,6 +129,16 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Guest.h" />
+    <ClInclude Include="Question.h" />
+    <ClInclude Include="QuestionManyAnswer.h" />
+    <ClInclude Include="QuestionOneAnswer.h" />
+    <ClInclude Include="QuestionUserAnswer.h" />
+    <ClInclude Include="Statistic.h" />
+    <ClInclude Include="Test.h" />
+    <ClInclude Include="TestingSystem.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

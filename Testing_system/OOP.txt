@@ -1,0 +1,7 @@
+<TEST> <CTG> Dev <CTG/> <NAME> OOP <NAME/> 
+<DSCR> Enter word IT <DSCR/> <QUA> <RANS> IT <RANS/> <QUA/>
+<DSCR> Choose one right word about IT <DSCR/> <QOA> <AANS> <EANS> Garber <EANS/> <EANS> Mac <EANS/> <EANS> Elenberg <EANS/> <EANS> Philip Morris <EANS/> <AANS/> <RANS> 2 <RANS/> <QOA/>
+<DSCR> Enter two best seller phone <DSCR/> <QMA> <AANS> <EANS> LG <EANS/> <EANS> iPhone <EANS/> <EANS> Lenovo <EANS/> <EANS> Xiaomi <EANS/> <EANS> Philips <EANS/> <AANS/> <RANS> <EANS> 2 <EANS/> <EANS> 4 <EANS/> <RANS/> <QMA/>
+<DSCR> Enter name our School <DSCR/> <QUA> <RANS> ITStep <RANS/> <QUA/>
+
+<TEST/> 
