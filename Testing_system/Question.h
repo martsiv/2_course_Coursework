@@ -7,6 +7,7 @@
 #include <iterator>
 #include <algorithm>
 #include <string>
+#include <cctype>
 using namespace std;
 
 const char TEST_BEGIN[] = "<TEST>";
@@ -37,13 +38,17 @@ class Question
 public:
 	Question(string description) : description(description) {}
 	virtual ~Question() {}
-	void AskQuestion() const { cout << description << endl; }
-	string GetDescription() const { return description; }
+	void AskQuestion()  { cout << description << endl; }
+	string GetDescription()  { return description; }
 	void ChangeDescription(string newDescription) { description = newDescription; }
-	virtual float CheckAnswer() const = 0;
-	virtual void ShowRightAnswer() const = 0;
+	virtual float CheckAnswer()  = 0;
+	virtual void ShowRightAnswer()  = 0;
 	virtual void ChangeAnswer() = 0;
 	virtual void ChangeRightAnswer() = 0;
-	virtual void ShowAllAnswers() const = 0;
-	virtual void Export(ostream& out) const = 0;
+	virtual void ShowAllAnswers()  = 0;
+	virtual void Export(string filename) = 0;
+	friend bool operator< (const Question& test1, const Question& test2)
+	{
+		return test1.description < test2.description;
+	}
 };

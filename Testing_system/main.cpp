@@ -5,7 +5,6 @@ using namespace std;
 
 int main()
 {
-    TestingSystem TS;
-    TS.Run();
-
+	TestingSystem test;
+	test.Run();
 }

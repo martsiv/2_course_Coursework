@@ -18,7 +18,7 @@ public:
 			this->numbersOfRightAnswer.push_back(i);
 	}
 	~QuestionManyAnswer() {}
-	bool isCorrectRightAnswer() const
+	bool isCorrectRightAnswer() 
 	{
 		for (auto i : numbersOfRightAnswer)
 		{
@@ -27,7 +27,7 @@ public:
 		}
 		return 1;
 	}	 
-	float CheckAnswer() const
+	float CheckAnswer() 
 	{
 		if (!isCorrectRightAnswer())
 		{
@@ -64,7 +64,7 @@ public:
 		}
 		return result;
 	}
-	void ShowRightAnswer() const
+	void ShowRightAnswer() 
 	{
 		if (!isCorrectRightAnswer())
 		{
@@ -171,27 +171,29 @@ public:
 		//ShowRightAnswer();
 
 	}
-	void ShowAllAnswers() const
+	void ShowAllAnswers() 
 	{
 		int count = 1;
 		for (auto i : answers)
 			cout << count++ << ") " << i << endl;
 	}
-	void Export(ostream& out) const
+	void Export(string filename)
 	{
-		out << "<DSCR> ";
+		ofstream out(filename + ".txt", ios::app);
+		out << DESCRIPTION_BEGIN << ' ';
 		out << GetDescription() << ' ';
-		out << "<DSCR/> ";
-		out << "<QMA> ";
-		out << "<AANS> ";
+		out << DESCRIPTION_END << ' ';
+		out << QUESTION_MANY_ANSWER_BEGIN << ' ';
+		out << ALL_ANSWER_BEGIN << ' ';
 		for (auto i : answers)
 			out << EXAMPLE_ANSWER_BEGIN << ' ' << i << ' ' << EXAMPLE_ANSWER_END << ' ';
-		out << "<AANS/> ";
-		out << "<RANS> ";
+		out << ALL_ANSWER_END << ' ';
+		out << RIGHT_ANSWER_BEGIN << ' ';
 		for (auto i : numbersOfRightAnswer)
 			out << EXAMPLE_ANSWER_BEGIN << ' ' << i << ' ' << EXAMPLE_ANSWER_END << ' ';
-		out << "<RANS/> ";
-		out << "<QMA/>\n";
+		out << RIGHT_ANSWER_END << ' ';
+		out << QUESTION_MANY_ANSWER_END << " \n";
+		out.close();
 	}
 };
 
