@@ -18,6 +18,7 @@ public:
 			this->numbersOfRightAnswer.push_back(i);
 	}
 	~QuestionManyAnswer() {}
+	QuestionType GetTypeQuestion() const { return QuestionType::ManyAnswer; }
 	bool isCorrectRightAnswer() 
 	{
 		for (auto i : numbersOfRightAnswer)

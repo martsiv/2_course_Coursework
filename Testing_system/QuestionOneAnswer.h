@@ -16,6 +16,7 @@ public:
 			this->answers.push_back(i);
 	}
 	~QuestionOneAnswer() {}
+	QuestionType GetTypeQuestion() const { return QuestionType::OwnAnswer; }
 	bool isCorrectRightAnswer() 
 	{
 		if (numberOfRightAnswer <= 0 || answers.size() < numberOfRightAnswer)

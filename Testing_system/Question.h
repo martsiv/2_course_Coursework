@@ -32,12 +32,14 @@ const char RIGHT_ANSWER_END[] = "<RANS/>";
 const char EXAMPLE_ANSWER_BEGIN[] = "<EANS>";
 const char EXAMPLE_ANSWER_END[] = "<EANS/>";
 
+enum class QuestionType { OwnAnswer = 1, OneAnswer, ManyAnswer };
 class Question
 {
 	string description;
 public:
 	Question(string description) : description(description) {}
 	virtual ~Question() {}
+	virtual QuestionType GetTypeQuestion() const = 0;
 	void AskQuestion()  { cout << description << endl; }
 	string GetDescription()  { return description; }
 	void ChangeDescription(string newDescription) { description = newDescription; }

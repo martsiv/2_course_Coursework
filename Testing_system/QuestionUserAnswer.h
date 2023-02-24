@@ -9,6 +9,7 @@ public:
 	QuestionUserAnswer(string description) : Question(description), answer(answer) { ChangeRightAnswer(); }
 	QuestionUserAnswer(string description, string answer) : Question(description), answer(answer) {}
 	~QuestionUserAnswer() {}
+	QuestionType GetTypeQuestion() const { return QuestionType::OwnAnswer; }
 	float CheckAnswer() 
 	{
 		string usersAnswer;
