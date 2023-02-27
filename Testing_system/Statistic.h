@@ -41,3 +41,12 @@ struct Statistic
 		return out;
 	}
 };
+
+bool predicateComparisonByTestName(const Statistic& stat1, const Statistic& stat2)
+{
+	return ((stat1.GetTestName() == stat2.GetTestName()) ? (stat1 < stat2) : (stat1.GetTestName() > stat2.GetTestName()));
+}
+bool predicateComparisonByCategory(const Statistic& stat1, const Statistic& stat2)
+{
+	return ((stat1.GetCategory() == stat2.GetCategory()) ? predicateComparisonByTestName(stat1, stat2) : (stat1.GetCategory() > stat2.GetCategory()));
+}

@@ -52,7 +52,7 @@ class TestingSystem
 	string guestsDataFileName = "Guests.txt";
 
 	//Supporting methods
-	bool ChoiseYesNo(char ifTrue, char ifFasle)
+	bool ChoiseYesNo(char ifTrue = 'y', char ifFasle = 'n')
 	{
 		char choise{};
 		while (true)
@@ -101,7 +101,10 @@ class TestingSystem
 	{
 		vectorKeys.clear();
 		for (auto i : tests)
-			vectorKeys.push_back(i.first);
+		{
+			if (find(vectorKeys.begin(), vectorKeys.end(), i.first) == vectorKeys.end())
+				vectorKeys.push_back(i.first);
+		}
 	}
 	bool CheckAdminDataFile()
 	{
@@ -209,13 +212,13 @@ class TestingSystem
 	}
 
 	//Tests
-	void ExportCategoryList() 
-	{
-		ofstream out("category_list.txt");
-		for (auto i : vectorKeys)
-			out << i << " | ";
-		out.close();
-	}
+	//void ExportCategoryList() 
+	//{
+	//	ofstream out("category_list.txt");
+	//	for (auto i : vectorKeys)
+	//		out << i << " | ";
+	//	out.close();
+	//}
 	KeyType GetCategoryName() 	//Takes the category name from a separate vector, for quick access to categories
 	{
 		
@@ -248,8 +251,8 @@ class TestingSystem
 	}
 	void ShowCategories() 
 	{
-		for (auto i : tests)
-			cout << i.first << endl;
+		for (auto i : vectorKeys)
+			cout << i << endl;
 	}
 	void ShowCategory() 
 	{
@@ -257,8 +260,24 @@ class TestingSystem
 	}
 	void ShowAllTestsInAllCategories()
 	{
+		if (tests.empty())
+		{
+			cout << "There are no tests\n";
+			return;
+		}
+		KeyType category = (*tests.begin()).first;
+		cout << "\tCategory: " << category << endl;
+		ShowTestsInCategory(category);
 		for (auto i : tests)
-			ShowTestsInCategory(i.first);
+		{
+			if (category != i.first)
+			{
+				category = i.first;
+				cout << "\tCategory: " << category << endl;
+				ShowTestsInCategory(category);
+			}
+		}
+		system("PAUSE");
 	}
 	void ExportTest() 
 	{
@@ -269,12 +288,7 @@ class TestingSystem
 		(*tmp).second.Export(filename);
 		SaveToTestsList(filename);
 	}
-	void SaveToTestsList(string testname)
-	{
-		ofstream out(savedTestsFileName, ios::app);
-		out << testname << "\n";
-		out.close();
-	}
+
 	int Import()
 	{
 		// 0 all right
@@ -282,14 +296,43 @@ class TestingSystem
 		// 2 format data erorr 
 		// 3 question format error
 		string filename = LoadFromTestsList();
-		if (filename == "")
+		if (filename == " ")
 		{
 			cout << "Error file name\n";
 			return 1;
 		}
-		//Test tmp(filename);
-		tests.emplace(PairTest{ filename, Test(filename + ".txt")});
-		//ifstream in(filename);
+		ifstream in(filename + ".txt");
+		if (!in)
+		{
+			cerr << "Invalid reading!" << endl;
+			return 1;
+		}
+		string in_category;
+		string strInput;
+		in >> strInput;
+		if (strInput != TEST_BEGIN)
+		{
+			cout << "Eror data!\n";
+			return 2;
+		}
+		while (in)
+		{
+			in >> strInput;
+			if (strInput == TEST_END)
+				break;
+			if (strInput == CATEGORY_BEGIN)
+			{
+				while (in >> strInput, strInput != CATEGORY_END)
+				{
+					in_category += (strInput + " ");
+				}
+				break;
+			}
+		}
+		in.close();
+		tests.emplace(PairTest{ in_category, Test(filename + ".txt")});
+		////Test tmp(filename);
+		//ifstream in(filename + ".txt");
 		//if (!in)
 		//{
 		//	cerr << "Invalid reading!" << endl;
@@ -368,7 +411,7 @@ class TestingSystem
 		//			cout << "Error in question format!\n";
 		//			return 3;
 		//		}
-		//		QuestionUserAnswer* q_tmp = new QuestionUserAnswer(in_description, in_answer);
+		//		shared_ptr<QuestionUserAnswer> q_tmp(new QuestionUserAnswer(in_description, in_answer));
 		//		(*iterator).second.AddQuestion(q_tmp);
 		//		in_answer.clear(); 
 		//		b_description = 0;
@@ -406,7 +449,7 @@ class TestingSystem
 		//			cout << "Error in question format!\n";
 		//			return 3;
 		//		}
-		//		QuestionOneAnswer* q_tmp = new QuestionOneAnswer(in_description, in_answers, in_numberOfRightAnswer);
+		//		shared_ptr<QuestionOneAnswer> q_tmp(new QuestionOneAnswer(in_description, in_answers, in_numberOfRightAnswer));
 		//		(*iterator).second.AddQuestion(q_tmp);
 		//		in_answer.clear();
 		//		in_answers.clear();
@@ -454,7 +497,7 @@ class TestingSystem
 		//			cout << "Error in question format!\n";
 		//			return 3;
 		//		}
-		//		QuestionManyAnswer* q_tmp = new QuestionManyAnswer(in_description, in_answers, in_numbersOfRightAnswer);
+		//		shared_ptr<QuestionManyAnswer> q_tmp(new QuestionManyAnswer(in_description, in_answers, in_numbersOfRightAnswer));
 		//		(*iterator).second.AddQuestion(q_tmp);
 		//		in_answer.clear();
 		//		in_answers.clear();
@@ -466,34 +509,50 @@ class TestingSystem
 		//	in_description.clear();
 		//}
 		//in.close();
-		//RefreshVectorKeys();
+		RefreshVectorKeys();
 		return 0;
 	}
 
-	//
+	void SaveToTestsList(string testname)
+	{
+		ofstream out(savedTestsFileName, ios::app);
+		out << testname << " |\n";
+		out.close();
+	}
+
 	string LoadFromTestsList()	//Returns the name of the file with the saved test of the same name
 	{
 		ifstream in(savedTestsFileName);
 		if (!in)
 		{
 			cerr << "Invalid reading!" << endl;
-			return "";
+			return " ";
 		}
 		cout << "Database with names of test files\n";
 		int count = 1;
-		string tmp;
-		while (in >> tmp)
-			cout << count++ << ") " << tmp << endl;
+		vector<string> testsNames;
+		string tmpName;
+		string strInput;
+		while (in >> strInput)
+		{
+			tmpName = strInput;
+			while (in >> strInput && strInput != "|")
+			{
+				tmpName += " " + strInput;
+			}
+			testsNames.push_back(tmpName);
+			cout << count++ << ") " << testsNames.back() << endl;
+		}
 		in.close();
 		cout << "Enter number of file(or 0 - to exit):\t";
 		int num = verificateNum(0, count);
 		if (!num)
-			return "";
-		in.open(savedTestsFileName);
-		for (int i = 0; i < num - 1; i++)
-			in >> tmp;
-		in.close();
-		return tmp;
+			return " ";
+		//in.open(savedTestsFileName);
+		//for (int i = 0; i < num - 1; i++)
+		//	in >> tmp;
+		//in.close();
+		return testsNames[num - 1];
 	}
 
 	TestIterator FindTest()
@@ -597,7 +656,7 @@ class TestingSystem
 	}
 	void ShowResultsByTest(string testname, ostream& out = std::cout)
 	{
-		sort(statistic.begin(), statistic.end());
+		sort(statistic.begin(), statistic.end(), predicateComparisonByTestName);
 		out << " ========= " << testname << " ========= \n\n";
 		for (auto i : statistic)
 		{
@@ -612,12 +671,26 @@ class TestingSystem
 	}
 	void ShowResult(ostream& out = std::cout) 
 	{
-		sort(statistic.begin(), statistic.end());
+		sort(statistic.begin(), statistic.end(), predicateComparisonByCategory);
 		out << " ================== General statistics ===============\n\n";
-		sort(statistic.begin(), statistic.end());
 		for (auto i : statistic)
 		{
 			out << "--------------== " << i.category << " ==--------------\n";
+			out << "\t" << i.testName << '\n';
+			out << "Student: " << i.GetFullName().first << ' ' << i.GetFullName().second << '\n';
+			out << "Number of correct answers: " << i.GetTotalScore() << '/' << i.GetMaxScore() << '\n';
+			out << "Percentage of correct answers:" << i.GetPercent() << '\n';
+			out << "Grade: " << i.GetGrade() << "\n\n";
+		}
+	}
+
+	void ShowResultByCategory(KeyType CategoryName, ostream& out = std::cout)           //////////// треба якось щоб він приймав категорію типу назву категорії або в середині себе шукав категорію
+	{
+		sort(statistic.begin(), statistic.end(), predicateComparisonByCategory);
+		out << " ================== " << CategoryName << " ============== = \n\n";
+		for (auto i : statistic)
+		{
+			if (i.GetCategory() == CategoryName)
 			out << "\t" << i.testName << '\n';
 			out << "Student: " << i.GetFullName().first << ' ' << i.GetFullName().second << '\n';
 			out << "Number of correct answers: " << i.GetTotalScore() << '/' << i.GetMaxScore() << '\n';
@@ -643,12 +716,15 @@ class TestingSystem
 			{
 			case Menu::ShowAllTests:
 				ShowAllTestsInAllCategories();
+				system("PAUSE");
 				break;
 			case Menu::StartNewTest:
 				StartNewTest(guest);
+				system("PAUSE");
 				break;
 			case Menu::ShowStatistic:
 				ShowResultsByUser(guest.GetFullname());
+				system("PAUSE");
 				break;
 			case Menu::Return:
 				return;
@@ -661,7 +737,7 @@ class TestingSystem
 		string lastname;
 		string address;
 		string phone;
-		cout << "======== Adding a new user =========\n";
+		cout << "======== Adding a new guest =========\n";
 		do
 		{
 			LoginPassword newLoginPassword = sign_in();
@@ -725,7 +801,87 @@ class TestingSystem
 		GuestIterator guestIterator = FindGuest();
 		if (guestIterator == guests.end())
 			return;
-		(*guestIterator).second.SetNewData();
+		LoginPassword newLoginPassword;
+		string firstname;
+		string lastname;
+		string address;
+		string phone;
+		bool b_newLoginPassword = 0;
+		bool b_name = 0;
+		bool b_address = 0;
+		bool b_phone = 0;
+
+			cout << "======== Changing guest data =========\n";
+			(*guestIterator).second.Show();
+			cout << "Do you want to change your login and password?(y, n) ";
+			if (ChoiseYesNo())
+			{
+				do
+				{
+					newLoginPassword = sign_in();
+					if (guests.find(newLoginPassword.first) != guests.end())
+					{
+						cout << "Such a login already exists, repeat with other data(y) or return(n)?\t";
+						continue;
+					}
+					b_newLoginPassword = 1;
+					break;
+				} while (ChoiseYesNo());
+			}
+
+			cout << "Do you want to change name?(y, n) ";
+			if (ChoiseYesNo())
+			{
+				b_name = 1;
+				cout << "Enter firstname: ";
+				getline(cin, firstname);
+				cout << "Enter lastname: ";
+				getline(cin, lastname);
+			}
+
+			cout << "Do you want to change the address?(y, n) ";
+			if (ChoiseYesNo())
+			{
+				b_address = 1;
+				cout << "Enter address: ";
+				getline(cin, address);
+			}
+
+			cout << "Do you want to change the phone?(y, n) ";
+			if (ChoiseYesNo())
+			{
+				b_phone = 1;
+				cout << "Enter phone: ";
+				getline(cin, phone);
+			}
+
+			cout << " --------- New data ----------\n";
+			if (b_newLoginPassword)
+				cout << newLoginPassword.first << endl;
+			if (b_name)
+				cout << firstname << " " << lastname << endl;
+			if (b_address)
+				cout << "Address: " << address << endl;
+			if (b_phone)
+				cout << "Phone: " << phone << endl;
+			cout << "\nDo you want to save your changes?(y, n) ";
+
+		if (ChoiseYesNo());
+		{
+			if (b_newLoginPassword)
+			{
+				newLoginPassword.second = encryptDecrypt(newLoginPassword.second);
+				(*guestIterator).second.SetLogin(newLoginPassword.first);
+				(*guestIterator).second.SetPassword(newLoginPassword.second);
+			}
+			if (b_name)
+				(*guestIterator).second.SetFullname(FullName(firstname, lastname));
+			if (b_address)
+				(*guestIterator).second.SetAddress(address);
+			if (b_phone)
+				(*guestIterator).second.SetPhone(phone);
+			SaveGuestFile();
+		}
 	}
 	
 	//Admin 
@@ -827,6 +983,10 @@ class TestingSystem
 	{
 		enum class Menu { ShowTotalResult = 1, ShowResultsByCategory, ShowResultsByTest, ShowResultsByUser, Return };
 		int menu = 0;
+		KeyType category;
+		TestIterator testIterator;
+		GuestIterator guestIterator;
+		string filename;
 		while (menu != 5)
 		{
 			cout << "================ Statistic control ===================\n";
@@ -838,13 +998,94 @@ class TestingSystem
 			menu = verificateNum(1, 5);
 			switch (Menu(menu))
 			{
-			case Menu::ShowTotalResult:ShowResult();
+			case Menu::ShowTotalResult:
+				
+				ShowResult();
+				if (!statistic.empty())
+				{
+					cout << "Save result to file?(y, n) ";
+					if (ChoiseYesNo())
+					{
+						cout << "Enter the file name: ";
+						cin >> filename;
+						cin.clear();
+						cin.ignore(256, '\n');
+						ofstream fout(filename + ".txt");
+						ShowResult(fout);
+					}
+				}
+				else
+				{
+					cout << "No statistics found!\n";
+					system("PAUSE");
+				}
+
 				break;
-			case Menu::ShowResultsByCategory:ShowCategories();
+			case Menu::ShowResultsByCategory:
+				category = GetCategoryName();
+				if (category != " ")
+				{
+					ShowResultByCategory(category);
+					cout << "Save result to file?(y, n) ";
+					if (ChoiseYesNo())
+					{
+						cout << "Enter the file name: ";
+						cin >> filename;
+						cin.clear();
+						cin.ignore(256, '\n');
+						ofstream fout(filename + ".txt");
+						ShowResultByCategory(category, fout);
+					}
+				}
+				else
+				{
+					cout << "No statistics found!\n";
+					system("PAUSE");
+				}
 				break;
-			case Menu::ShowResultsByTest:ShowResultsByTest((*FindTest()).second.GetTestName());
+			case Menu::ShowResultsByTest:
+				testIterator = FindTest();
+				if (testIterator != tests.end())
+				{
+					ShowResultsByTest((*testIterator).second.GetTestName());
+					cout << "Save result to file?(y, n) ";
+					if (ChoiseYesNo())
+					{
+						cout << "Enter the file name: ";
+						cin >> filename;
+						cin.clear();
+						cin.ignore(256, '\n');
+						ofstream fout(filename + ".txt");
+						ShowResultsByTest((*testIterator).second.GetTestName(), fout);
+					}
+				}
+				else
+				{
+					cout << "No statistics found!\n";
+					system("PAUSE");
+				}
 				break;
-			case Menu::ShowResultsByUser:ShowResultsByUser(((*FindGuest()).second.GetFullname()));
+			case Menu::ShowResultsByUser:
+				guestIterator = FindGuest();
+				if (guestIterator != guests.end())
+				{
+					ShowResultsByUser((*guestIterator).second.GetFullname());
+					cout << "Save result to file?(y, n) ";
+					if (ChoiseYesNo())
+					{
+						cout << "Enter the file name: ";
+						cin >> filename;
+						cin.clear();
+						cin.ignore(256, '\n');
+						ofstream fout(filename + ".txt");
+						ShowResultsByUser((*guestIterator).second.GetFullname(), fout);
+					}
+				}
+				else
+				{
+					cout << "No statistics found!\n";
+					system("PAUSE");
+				}
 				break;
 			case Menu::Return:
 				return;

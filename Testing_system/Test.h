@@ -4,7 +4,7 @@
 #include "QuestionOneAnswer.h"
 #include "QuestionManyAnswer.h"
 using namespace std;
-typedef vector<Question*>::iterator QuestionIterator;
+typedef vector<shared_ptr<Question>>::iterator QuestionIterator;
 int verificateNum(int leftRange, int rightRange)
 {
 	int num;
@@ -22,9 +22,9 @@ class Test
 	string category;
 	string testName;
 	int maxPoint;
-	vector<Question*> questions;		//polymorphism
+	vector<shared_ptr<Question>> questions;		//polymorphism
 	void RecalculateMaxPoint() { maxPoint = questions.size(); }
-	
+
 public:
 	Test(string category, string testName) : category(category), testName(testName), maxPoint(0) {}
 	Test(const Test& test)
@@ -35,7 +35,7 @@ public:
 		for (auto i : test.questions)
 			this->questions.push_back(i);
 	}
-	Test& operator=(const Test& test)
+	/*Test& operator=(const Test& test)
 	{
 		if (&test == this)
 			return *this;
@@ -47,18 +47,18 @@ public:
 		for (auto i : test.questions)
 			this->questions.push_back(i);
 		return *this;
-	}
-	Test(Test&& test) 
-	{
-		this->category = test.category;
-		this->testName = test.testName;
-		this->maxPoint = test.maxPoint;
-		for (auto i : test.questions)
-			this->questions.push_back(i);
-		test.questions.clear();
-		//this->questions.insert(test.questions.begin(), test.questions.end(), this->questions.begin());
-	}
-	Test& operator=(Test&& test) 
+	}*/
+	//Test(Test&& test)
+	//{
+	//	this->category = test.category;
+	//	this->testName = test.testName;
+	//	this->maxPoint = test.maxPoint;
+	//	for (auto i : test.questions)
+	//		this->questions.push_back(i);
+	//	test.questions.clear();
+	//	//this->questions.insert(test.questions.begin(), test.questions.end(), this->questions.begin());
+	//}
+	/*Test& operator=(Test&& test)
 	{
 		if (&test == this)
 			return *this;
@@ -70,9 +70,9 @@ public:
 		for (auto i : test.questions)
 			this->questions.push_back(i);
 		test.questions.clear();
-		//this->questions.insert(test.questions.begin(), test.questions.end(), this->questions.begin());
+		this->questions.insert(test.questions.begin(), test.questions.end(), this->questions.begin());
 		return *this;
-	}
+	}*/
 	Test(const string& fileName)
 	{
 		maxPoint = 0;
@@ -105,7 +105,7 @@ public:
 			in >> strInput;
 			if (strInput == TEST_END)
 				break;
-			if (strInput == CATEGORY_BEGIN)
+			else if (strInput == CATEGORY_BEGIN)
 			{
 				b_category = 1;
 				while (in >> strInput, strInput != CATEGORY_END)
@@ -113,9 +113,8 @@ public:
 					in_category += (strInput + " ");
 				}
 				category = in_category;
-				continue;
 			}
-			if (strInput == TEST_NAME_BEGIN)
+			else if (strInput == TEST_NAME_BEGIN)
 			{
 				b_test_name = 1;
 				while (in >> strInput, strInput != TEST_NAME_END)
@@ -123,18 +122,16 @@ public:
 					in_testName += (strInput + " ");
 				}
 				testName = in_testName;
-				continue;
 			}
-			if (strInput == DESCRIPTION_BEGIN)
+			else if (strInput == DESCRIPTION_BEGIN)
 			{
 				b_description = 1;
 				while (in >> strInput, strInput != DESCRIPTION_END)
 				{
 					in_description += (strInput + " ");
 				}
-				continue;
 			}
-			if (strInput == QUESTION_USER_ANSWER_BEGIN)
+			else if (strInput == QUESTION_USER_ANSWER_BEGIN)
 			{
 				while (in >> strInput, strInput != QUESTION_USER_ANSWER_END)
 				{
@@ -149,9 +146,10 @@ public:
 				{
 					cout << "Error in question format!\n";
 				}
-				QuestionUserAnswer* q_tmp = new QuestionUserAnswer(in_description, in_answer);
+				shared_ptr<QuestionUserAnswer> q_tmp(new QuestionUserAnswer(in_description, in_answer));
 				AddQuestion(q_tmp);
 				in_answer.clear();
+				in_description.clear();
 			}
 			else if (strInput == QUESTION_ONE_ANSWER_BEGIN)
 			{
@@ -184,10 +182,11 @@ public:
 				{
 					cout << "Error in question format!\n";
 				}
-				QuestionOneAnswer* q_tmp = new QuestionOneAnswer(in_description, in_answers, in_numberOfRightAnswer);
+				shared_ptr<QuestionOneAnswer> q_tmp(new QuestionOneAnswer(in_description, in_answers, in_numberOfRightAnswer));
 				AddQuestion(q_tmp);
 				in_answer.clear();
 				in_answers.clear();
+				in_description.clear();
 			}
 			else if (strInput == QUESTION_MANY_ANSWER_BEGIN)
 			{
@@ -228,7 +227,7 @@ public:
 				{
 					cout << "Error in question format!\n";
 				}
-				QuestionManyAnswer* q_tmp = new QuestionManyAnswer(in_description, in_answers, in_numbersOfRightAnswer);
+				shared_ptr<QuestionManyAnswer> q_tmp(new QuestionManyAnswer(in_description, in_answers, in_numbersOfRightAnswer));
 				AddQuestion(q_tmp);
 				in_answer.clear();
 				in_answers.clear();
@@ -236,21 +235,21 @@ public:
 				b_description = 0;
 				b_answers = 0;
 				b_right_answers = 0;
+				in_description.clear();
 			}
-			in_description.clear();
 		}
 		in.close();
 		RecalculateMaxPoint();
 	}
 	~Test()
 	{
-		for (auto i : questions)
+		/*for (auto i : questions)
 			delete i;
-		questions.clear();
+		questions.clear();*/
 	}
 
-	string GetCategory()  { return category; }
-	string GetTestName()  { return testName; }
+	string GetCategory() { return category; }
+	string GetTestName() { return testName; }
 	void ClearTest()
 	{
 		questions.clear();
@@ -274,23 +273,24 @@ public:
 		switch (QuestionType(result))
 		{
 		case QuestionType::OwnAnswer:
-			questions.push_back(new QuestionUserAnswer(description));
+			questions.push_back(shared_ptr<Question>(new QuestionUserAnswer(description)));
 			//questions.back()->SetAnswer();
 			break;
 		case QuestionType::OneAnswer:
-			questions.push_back(new QuestionOneAnswer(description));
+			questions.push_back(shared_ptr<Question>(new QuestionOneAnswer(description)));
 			break;
 		case QuestionType::ManyAnswer:
-			questions.push_back(new QuestionManyAnswer(description));
+			questions.push_back(shared_ptr<Question>(new QuestionManyAnswer(description)));
 			break;
 		default:
 			break;
 		}
 		RecalculateMaxPoint();
 	}
-	void AddQuestion(Question* question)
+	void AddQuestion(shared_ptr<Question> question)
 	{
-		questions.push_back(question);
+		questions.push_back(shared_ptr<Question>(question));
+		RecalculateMaxPoint();
 	}
 	QuestionIterator FindQuestion()
 	{
@@ -316,7 +316,7 @@ public:
 	{
 		if (it == questions.end())
 			return;
-		delete *it;
+		//delete *it;
 		questions.erase(it);
 		RecalculateMaxPoint();
 	}
@@ -350,15 +350,15 @@ public:
 		int count = 1;
 		for (auto i : questions)
 		{
-			cout << "Question " << count++ << " of " << questions.size() << endl;
+			cout << "\n\tQuestion " << count++ << " of " << questions.size() << endl;
 			i->AskQuestion();
 			result += i->CheckAnswer();
 		}
 
 		return result;
 	}
-	int GetMaxPoint()  { return maxPoint; }
-	void ShowAllQuestions() 
+	int GetMaxPoint() { return maxPoint; }
+	void ShowAllQuestions()
 	{
 		int count = 1;
 		for (auto i : questions)
@@ -425,7 +425,7 @@ public:
 				while (in >> strInput, strInput != CATEGORY_END)
 				{
 					in_category += (strInput + " ");
-				} 
+				}
 				continue;
 			}
 			if (strInput == TEST_NAME_BEGIN)
@@ -462,7 +462,7 @@ public:
 					cout << "Error in question format!\n";
 					return 3;
 				}
-				QuestionUserAnswer* q_tmp = new QuestionUserAnswer(in_description, in_answer);
+				shared_ptr<QuestionUserAnswer> q_tmp(new QuestionUserAnswer(in_description, in_answer));
 				AddQuestion(q_tmp);
 				in_answer.clear();
 			}
@@ -498,7 +498,7 @@ public:
 					cout << "Error in question format!\n";
 					return 3;
 				}
-				QuestionOneAnswer* q_tmp = new QuestionOneAnswer(in_description, in_answers, in_numberOfRightAnswer);
+				shared_ptr<QuestionOneAnswer> q_tmp(new QuestionOneAnswer(in_description, in_answers, in_numberOfRightAnswer));
 				AddQuestion(q_tmp);
 				in_answer.clear();
 				in_answers.clear();
@@ -543,7 +543,7 @@ public:
 					cout << "Error in question format!\n";
 					return 3;
 				}
-				QuestionManyAnswer* q_tmp = new QuestionManyAnswer(in_description, in_answers, in_numbersOfRightAnswer);
+				shared_ptr<QuestionManyAnswer> q_tmp(new QuestionManyAnswer(in_description, in_answers, in_numbersOfRightAnswer));
 				AddQuestion(q_tmp);
 				in_answer.clear();
 				in_answers.clear();

@@ -6,7 +6,7 @@ class QuestionUserAnswer : public Question
 {
 	string answer;
 public:
-	QuestionUserAnswer(string description) : Question(description), answer(answer) { ChangeRightAnswer(); }
+	QuestionUserAnswer(string description) : Question(description), answer("") { ChangeRightAnswer(); }
 	QuestionUserAnswer(string description, string answer) : Question(description), answer(answer) {}
 	~QuestionUserAnswer() {}
 	QuestionType GetTypeQuestion() const { return QuestionType::OwnAnswer; }

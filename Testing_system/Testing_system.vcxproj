@@ -127,7 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Guest.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Question.cpp" />
+    <ClCompile Include="QuestionManyAnswer.cpp" />
+    <ClCompile Include="QuestionOneAnswer.cpp" />
+    <ClCompile Include="QuestionUserAnswer.cpp" />
+    <ClCompile Include="Statistic.cpp" />
+    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="TestingSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Guest.h" />

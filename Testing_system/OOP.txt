@@ -1,7 +1,12 @@
-<TEST> <CTG> Dev <CTG/> <NAME> OOP <NAME/> 
-<DSCR> Enter word IT <DSCR/> <QUA> <RANS> IT <RANS/> <QUA/>
-<DSCR> Choose one right word about IT <DSCR/> <QOA> <AANS> <EANS> Garber <EANS/> <EANS> Mac <EANS/> <EANS> Elenberg <EANS/> <EANS> Philip Morris <EANS/> <AANS/> <RANS> 2 <RANS/> <QOA/>
-<DSCR> Enter two best seller phone <DSCR/> <QMA> <AANS> <EANS> LG <EANS/> <EANS> iPhone <EANS/> <EANS> Lenovo <EANS/> <EANS> Xiaomi <EANS/> <EANS> Philips <EANS/> <AANS/> <RANS> <EANS> 2 <EANS/> <EANS> 4 <EANS/> <RANS/> <QMA/>
-<DSCR> Enter name our School <DSCR/> <QUA> <RANS> ITStep <RANS/> <QUA/>
-
+<TEST> <CTG> Dev <CTG/> <NAME> OOP  <NAME/> 
+<DSCR> Which of the following is not one of the four pillars of object-oriented programming? <DSCR/>  <QUA> <RANS> Abstraction <RANS/> <QUA/> 
+<DSCR> What is the purpose of inheritance in object-oriented programming? <DSCR/> <QOA> <AANS> <EANS> To reduce code duplication  <EANS/> <EANS> To provide a way for objects to communicate with each other  <EANS/> <EANS> To control access to class members  <EANS/> <EANS> To define the structure of an object  <EANS/> <AANS/> <RANS> 1 <RANS/> <QOA/>
+<DSCR> Which of the following is not a benefit of encapsulation? <DSCR/> <QOA> <AANS> <EANS> Code modularity  <EANS/> <EANS> Security  <EANS/> <EANS> Code reusability  <EANS/> <EANS> Data hiding  <EANS/> <AANS/> <RANS> 3 <RANS/> <QOA/> 
+<DSCR> What is the difference between a class and an object? <DSCR/> <QOA> <AANS> <EANS> A class is a blueprint for creating objects, while an object is an instance of a class.  <EANS/> <EANS> A class is an instance of an object, while an object is a blueprint for creating classes.  <EANS/> <EANS> A class and an object are the same thing.  <EANS/> <EANS> A class is a function, while an object is a variable. <EANS/> <AANS/> <RANS> 1 <RANS/> <QOA/> 
+<DSCR> What is polymorphism? <DSCR/> <QOA> <AANS> <EANS> The ability of objects to take on different forms  <EANS/> <EANS> The ability of objects to communicate with each other  <EANS/> <EANS> The ability of objects to access private data  <EANS/> <EANS> The ability of objects to encapsulate data  <EANS/> <AANS/> <RANS> 1 <RANS/> <QOA/> 
+<DSCR> Which of the following is not a fundamental concept of object-oriented programming? <DSCR/> <QUA> <RANS> Functions <RANS/> <QUA/> 
+<DSCR> What is an abstract class? <DSCR/> <QOA> <AANS> <EANS> A class that cannot be instantiated  <EANS/> <EANS> A class that can be instantiated, but not inherited from <EANS/> <EANS> A class that defines an interface, but does not provide an implementation <EANS/> <EANS> A class that defines both an interface and an implementation <EANS/> <AANS/> <RANS> 3 <RANS/> <QOA/> 
+<DSCR> What is method overloading? <DSCR/> <QOA> <AANS> <EANS> When a method has the same name as a class  <EANS/> <EANS> When a method has the same name as another method, but a different signature <EANS/> <EANS> When a method has the same name as a variable <EANS/> <EANS> When a method has the same signature as another method <EANS/> <AANS/> <RANS> 2 <RANS/> <QOA/> 
+<DSCR> What is a constructor? <DSCR/> <QOA> <AANS> <EANS> A method that is called when an object is created  <EANS/> <EANS> A method that is called when an object is destroyed  <EANS/> <EANS> A method that is called when an object is serialized  <EANS/> <EANS> A method that is called when an object is deserialized  <EANS/> <AANS/> <RANS> 1 <RANS/> <QOA/> 
+<DSCR> Which visibility modifiers prevent a class member from being accessed from outside the class? <DSCR/> <QMA> <AANS> <EANS> public <EANS/> <EANS> protected <EANS/> <EANS> private <EANS/> <EANS> internal <EANS/> <AANS/> <RANS> <EANS> 2 <EANS/> <EANS> 3 <EANS/> <RANS/> <QMA/> 
 <TEST/> 
